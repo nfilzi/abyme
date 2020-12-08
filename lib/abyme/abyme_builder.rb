@@ -2,11 +2,11 @@ module Abyme
   class AbymeBuilder < ActionView::Base
     include ActionView
 
-    # If a block is given to the #abymize helper 
-    # it will instanciate a new AbymeBuilder 
+    # If a block is given to the #abymize helper
+    # it will instanciate a new AbymeBuilder
     # and pass to it the association name (Symbol)
     # the form object, lookup_context optionaly a partial path
-    # then yield itself to the block 
+    # then yield itself to the block
 
     def initialize(association:, form:, lookup_context:, partial:, &block)
       @association = association
@@ -20,7 +20,7 @@ module Abyme
 
     # calls the #persisted_records_for helper method
     # passing association, form and options to it
-  
+
     def records(options = {})
       persisted_records_for(@association, @form, options) do |fields_for_association|
         render_association_partial(fields_for_association, options)
@@ -31,18 +31,19 @@ module Abyme
 
     # calls the #new_records_for helper method
     # passing association, form and options to it
-    
+
     def new_records(options = {}, &block)
       new_records_for(@association, @form, options) do |fields_for_association|
         render_association_partial(fields_for_association, options)
       end
     end
-  
+
     private
 
     def render_association_partial(fields, options)
       partial = @partial || options[:partial] || "abyme/#{@association.to_s.singularize}_fields"
-      ActionController::Base.render(partial: partial, locals: { f: fields })
+
+      @form.template.controller.render(partial: partial, locals: { f: fields })
     end
   end
 end
